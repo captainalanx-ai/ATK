@@ -1,0 +1,17 @@
+{
+  "name": "atk-studio-admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ATK 工作室新人学习进度管理系统（网页版 + 手机端）",
+  "type": "module",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "reset": "node server/reset.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {}
+}

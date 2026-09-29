@@ -1,0 +1,109 @@
+/* 手机端专属版式 */
+
+.m-app { min-height: 100vh; padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px)); }
+
+/* 顶部栏 */
+.m-top {
+  position: sticky; top: 0; z-index: 40;
+  height: 52px; display: flex; align-items: center; gap: 10px;
+  padding: 0 14px;
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.m-top h1 { font-size: 16.5px; font-weight: 700; letter-spacing: -.2px; }
+
+/* 内容 */
+.m-body { padding: 12px 12px 20px; display: flex; flex-direction: column; gap: 12px; }
+.m-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 14px;
+}
+.m-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.m-title h3 { font-size: 14.5px; }
+
+/* 今日打卡 Hero */
+.m-hero {
+  background: linear-gradient(140deg, #4338CA 0%, #4F46E5 55%, #7C3AED 100%);
+  border-radius: 18px; padding: 16px; color: #fff; position: relative; overflow: hidden;
+}
+.m-hero::after {
+  content: ''; position: absolute; right: -40px; top: -50px; width: 170px; height: 170px;
+  border-radius: 50%; background: rgba(255,255,255,.10);
+}
+.m-hero > * { position: relative; z-index: 1; }
+.m-hero .h-title { font-size: 13px; opacity: .85; }
+.m-hero .h-value { font-size: 30px; font-weight: 800; letter-spacing: -1px; line-height: 1.15; }
+.m-hero .h-sub { font-size: 12px; opacity: .85; }
+.m-hero .btn { background: rgba(255,255,255,.20); border-color: transparent; color: #fff; }
+.m-hero .btn:active { background: rgba(255,255,255,.30); }
+
+/* 快捷宫格 */
+.m-grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.m-cell {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 13px;
+  padding: 10px 6px; text-align: center;
+}
+.m-cell .v { font-size: 19px; font-weight: 750; letter-spacing: -.5px; font-variant-numeric: tabular-nums; }
+.m-cell .l { font-size: 10.5px; color: var(--text-3); margin-top: 2px; }
+
+.m-grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+/* 列表项 */
+.m-item {
+  display: flex; align-items: center; gap: 11px; padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+}
+.m-item:last-child { border-bottom: none; }
+.m-item .grow { min-width: 0; }
+
+/* 横向筛选 chips */
+.m-chips { display: flex; gap: 7px; overflow-x: auto; padding: 2px 0 4px; }
+.m-chips::-webkit-scrollbar { display: none; }
+.m-chip {
+  flex: none; padding: 6px 13px; border-radius: 99px; font-size: 12.5px; font-weight: 550;
+  border: 1px solid var(--border-strong); color: var(--text-2); background: var(--surface);
+}
+.m-chip.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+/* 底部导航 */
+.m-tabs {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+  display: flex; height: calc(58px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+}
+.m-tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; font-size: 10.5px; color: var(--text-3); font-weight: 550;
+}
+.m-tab.active { color: var(--brand); font-weight: 650; }
+.m-tab svg { width: 21px; height: 21px; }
+
+/* 全屏子页 */
+.m-sheet {
+  position: fixed; inset: 0; z-index: 200; background: var(--bg);
+  display: flex; flex-direction: column;
+  animation: sheetUp .22s cubic-bezier(.2,.8,.3,1);
+}
+@keyframes sheetUp { from { transform: translateY(100%) } to { transform: none } }
+.m-sheet-top {
+  height: 52px; flex: none; display: flex; align-items: center; gap: 10px; padding: 0 12px;
+  border-bottom: 1px solid var(--border); background: var(--surface);
+}
+.m-sheet-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 12px 28px; }
+
+/* 登录 */
+.m-login { min-height: 100vh; display: flex; flex-direction: column; padding: 40px 22px 30px; }
+.m-login-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+.m-login .big { font-size: 26px; font-weight: 800; letter-spacing: -.6px; margin-bottom: 6px; }
+
+/* 大按钮 */
+.m-btn-lg { height: 48px; font-size: 15.5px; border-radius: 12px; }
+
+/* 阶段进度条组 */
+.m-stage-bar { display: flex; gap: 4px; }
+.m-stage-bar i { flex: 1; height: 5px; border-radius: 3px; background: var(--bg-soft); }
+.m-stage-bar i.on { background: var(--brand); }
