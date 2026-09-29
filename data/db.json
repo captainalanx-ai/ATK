@@ -2,7 +2,7 @@
   "meta": {
     "version": 1,
     "createdAt": "2026-09-28T19:42:00.602Z",
-    "updatedAt": "2026-09-29T04:05:06.903Z"
+    "updatedAt": "2026-09-29T06:30:32.218Z"
   },
   "config": {
     "studioName": "ATK 工作室",
@@ -9278,6 +9278,17 @@
   ],
   "logs": [
     {
+      "id": "log_mumaruzlwq2dl",
+      "action": "登录",
+      "detail": "系统管理员 登录系统",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T06:30:32.097Z"
+    },
+    {
       "id": "log_mum5kuhq2p7m5",
       "action": "登录",
       "detail": "系统管理员 登录系统",
@@ -9679,6 +9690,10 @@
     "53ce09beaa88f8ce2db417bf55185785c3c371edc22af6f1": {
       "userId": "u_mulnlupm1gxn7",
       "exp": 1793246706782
+    },
+    "2f6fb314d483e41d4fc400285ad13b7a081b0052410c7013": {
+      "userId": "u_mulnlupm1gxn7",
+      "exp": 1793255432096
     }
   }
 }

@@ -38,7 +38,9 @@ const ctx = {
 export function go(route, param = '') {
   state.route = route;
   state.param = param;
-  location.hash = `#/${route}${param ? `/${param}` : ''}`;
+  // pushState avoids hash-anchor scroll handlers that treat "#/route" as a CSS selector
+  const nextHash = `#/${route}${param ? `/${param}` : ''}`;
+  if (location.hash !== nextHash) history.pushState(null, '', nextHash);
   renderPage();
 }
 
@@ -309,10 +311,12 @@ async function boot() {
   }
 }
 
-window.addEventListener('hashchange', () => {
+function syncRouteFromHash() {
   const hash = location.hash.replace(/^#\/?/, '').split('/');
   const r = hash[0] || 'dashboard';
-  if (PAGES[r] && r !== state.route) { state.route = r; state.param = hash[1] || ''; if (state.user) renderPage(); }
-});
+  if (PAGES[r] && r !== state.route) { state.route = r; state.param = hash[1] || ''; if (state.user) renderShell(); }
+}
+window.addEventListener('hashchange', syncRouteFromHash);
+window.addEventListener('popstate', syncRouteFromHash);
 
 boot();
