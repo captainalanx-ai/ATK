@@ -2,7 +2,7 @@
   "meta": {
     "version": 1,
     "createdAt": "2026-09-28T19:42:00.602Z",
-    "updatedAt": "2026-09-29T04:05:06.903Z"
+    "updatedAt": "2026-09-29T12:49:14.051Z"
   },
   "config": {
     "studioName": "ATK 工作室",
@@ -667,7 +667,7 @@
       ],
       "note": "",
       "createdAt": "2026-09-21T00:00:00.000Z",
-      "updatedAt": null,
+      "updatedAt": "2026-09-29T12:40:58.573Z",
       "employmentType": "parttime",
       "availability": {
         "slots": {
@@ -9278,6 +9278,182 @@
   ],
   "logs": [
     {
+      "id": "log_mumoav1thjyjx",
+      "action": "登录",
+      "detail": "Ken 哥 登录系统",
+      "actor": {
+        "id": "u_mulnluqefvovt",
+        "name": "Ken 哥",
+        "role": "leader"
+      },
+      "at": "2026-09-29T12:49:13.649Z"
+    },
+    {
+      "id": "log_mumo091pjnvfr",
+      "action": "更新新人",
+      "detail": "更新了 林晓雅 的资料",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:40:58.573Z"
+    },
+    {
+      "id": "log_mumo08za4e72v",
+      "action": "登录",
+      "detail": "系统管理员 登录系统",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:40:58.486Z"
+    },
+    {
+      "id": "log_mumnz9o3mlka0",
+      "action": "更新新人",
+      "detail": "更新了 林晓雅 的资料",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:40:12.723Z"
+    },
+    {
+      "id": "log_mumnz9nklbbgl",
+      "action": "导出备份",
+      "detail": "导出了全量数据 JSON",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:40:12.704Z"
+    },
+    {
+      "id": "log_mumnz9ig8sk1v",
+      "action": "登录",
+      "detail": "系统管理员 登录系统",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:40:12.520Z"
+    },
+    {
+      "id": "log_mumnwtq24rywh",
+      "action": "登录",
+      "detail": "系统管理员 登录系统",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:38:18.746Z"
+    },
+    {
+      "id": "log_mumnkkqgmrl5i",
+      "action": "登录",
+      "detail": "系统管理员 登录系统",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:28:47.224Z"
+    },
+    {
+      "id": "log_mumn49bvmqflq",
+      "action": "更新新人",
+      "detail": "更新了 林晓雅 的资料",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:16:05.947Z"
+    },
+    {
+      "id": "log_mumn49b8iyj64",
+      "action": "登录",
+      "detail": "系统管理员 登录系统",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:16:05.924Z"
+    },
+    {
+      "id": "log_mumn42az5vrzj",
+      "action": "登录",
+      "detail": "系统管理员 登录系统",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:15:56.843Z"
+    },
+    {
+      "id": "log_mumn3rgrib80u",
+      "action": "更新新人",
+      "detail": "更新了 林晓雅 的资料",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:15:42.795Z"
+    },
+    {
+      "id": "log_mumn3rg3dgvxv",
+      "action": "登录",
+      "detail": "系统管理员 登录系统",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:15:42.771Z"
+    },
+    {
+      "id": "log_mumn3hr1mauk6",
+      "action": "更新新人",
+      "detail": "更新了 林晓雅 的资料",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:15:30.205Z"
+    },
+    {
+      "id": "log_mumn3hq9q4xbc",
+      "action": "登录",
+      "detail": "系统管理员 登录系统",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:15:30.177Z"
+    },
+    {
+      "id": "log_mumn1uov177vt",
+      "action": "登录",
+      "detail": "系统管理员 登录系统",
+      "actor": {
+        "id": "u_mulnlupm1gxn7",
+        "name": "系统管理员",
+        "role": "admin"
+      },
+      "at": "2026-09-29T12:14:13.663Z"
+    },
+    {
       "id": "log_mum5kuhq2p7m5",
       "action": "登录",
       "detail": "系统管理员 登录系统",
@@ -9676,9 +9852,45 @@
       "userId": "u_mulnlupm1gxn7",
       "exp": 1793245584000
     },
-    "53ce09beaa88f8ce2db417bf55185785c3c371edc22af6f1": {
+    "eb33ba13cadd005cdaf849436e2d6844bd571e402cd7cf3d": {
       "userId": "u_mulnlupm1gxn7",
-      "exp": 1793246706782
+      "exp": 1793276053663
+    },
+    "eabd66d46f2ea5c97fed139e7a3fb7085a90b0cd1908f1a8": {
+      "userId": "u_mulnlupm1gxn7",
+      "exp": 1793276130177
+    },
+    "5318f3c235e37f1c9f2e6460f03d29028c4b578df065bd04": {
+      "userId": "u_mulnlupm1gxn7",
+      "exp": 1793276142771
+    },
+    "e2dfcdbb0cdadd0210bef3d70a090e1851e0938a54854843": {
+      "userId": "u_mulnlupm1gxn7",
+      "exp": 1793276156842
+    },
+    "2ffa6d67b160b810b9f55dc6135e0f4ed468d44fb0142089": {
+      "userId": "u_mulnlupm1gxn7",
+      "exp": 1793276165924
+    },
+    "ba59a1d3fe161546ed3f82bbd89e0926222849b81787eb9f": {
+      "userId": "u_mulnlupm1gxn7",
+      "exp": 1793276927224
+    },
+    "16ae3f5598c4fd88122c91eff649bfebb8320b3d13ea958d": {
+      "userId": "u_mulnlupm1gxn7",
+      "exp": 1793277498746
+    },
+    "b912c1bc27d7637545d7b641bbab1ca0a197d518df18751e": {
+      "userId": "u_mulnlupm1gxn7",
+      "exp": 1793277612520
+    },
+    "71385afb52eedffb337ed23181c82ec83ba8b2aec5e322ad": {
+      "userId": "u_mulnlupm1gxn7",
+      "exp": 1793277658485
+    },
+    "5a2e91b46ae686fd4fc3e9644af7f9f25dece47f38199d3f": {
+      "userId": "u_mulnluqefvovt",
+      "exp": 1793278153649
     }
   }
 }

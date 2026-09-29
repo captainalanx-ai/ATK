@@ -29,14 +29,35 @@ const PORT = Number(process.env.PORT) || 3000;
 /* ------------------------------------------------------------------ */
 /* 启动                                                                 */
 /* ------------------------------------------------------------------ */
-load();
-ensureSeedUsers();
-const orphans = cleanupOrphanAccounts();
-if (orphans.length) console.log(`[cleanup] 已清理 ${orphans.length} 个失效的新人账号：${orphans.join('、')}`);
-const db0 = get();
-if (!db0.members.length) {
-  const r = seedDemoData();
-  console.log(`[seed] 已生成演示数据：${r.members} 位新人 / ${r.checkins} 条打卡`);
+// 每一步都单独容错：托管环境里启动阶段抛异常 = 整个函数起不来 = 500，
+// 所以宁可少做一件事，也不能让进程挂掉。
+try {
+  load();
+} catch (err) {
+  console.error('[boot] 数据加载失败，使用空库继续启动：', err && err.message);
+}
+
+try {
+  ensureSeedUsers();
+} catch (err) {
+  console.error('[boot] 初始化账号失败：', err && err.message);
+}
+
+try {
+  const orphans = cleanupOrphanAccounts();
+  if (orphans.length) console.log(`[cleanup] 已清理 ${orphans.length} 个失效的新人账号：${orphans.join('、')}`);
+} catch (err) {
+  console.error('[boot] 清理失效账号失败：', err && err.message);
+}
+
+try {
+  const db0 = get();
+  if (!db0.members.length) {
+    const r = seedDemoData();
+    console.log(`[seed] 已生成演示数据：${r.members} 位新人 / ${r.checkins} 条打卡`);
+  }
+} catch (err) {
+  console.error('[boot] 生成演示数据失败：', err && err.message);
 }
 
 /**
@@ -63,7 +84,11 @@ function migrateEmploymentFields() {
   }
   if (changed) { save(true); flush(); console.log('[migrate] 已补齐全职/兼职与空闲时间字段'); }
 }
-migrateEmploymentFields();
+try {
+  migrateEmploymentFields();
+} catch (err) {
+  console.error('[boot] 全职/兼职字段迁移失败（不影响使用）：', err && err.message);
+}
 
 /* ------------------------------------------------------------------ */
 /* 工具                                                                 */
@@ -123,6 +148,11 @@ function safeJoin(baseDir, relPath) {
   return target;
 }
 
+/** 只有这些后缀缺文件时才用 index.html 兜底（前端路由用），
+ *  其余（js/css 等静态资源）一律老实返回 404 —— 否则浏览器会拿到 HTML 当 JS 执行，
+ *  页面白屏且很难排查。 */
+const SPA_FALLBACK_EXT = new Set(['', '.html']);
+
 function serveStatic(req, res, urlPath) {
   let filePath = null;
   if (urlPath === '/shared/' || urlPath.startsWith('/shared/')) {
@@ -132,23 +162,34 @@ function serveStatic(req, res, urlPath) {
   }
   if (!filePath) { res.writeHead(403).end('Forbidden'); return; }
   fs.stat(filePath, (err, st) => {
+    const ext = path.extname(filePath).toLowerCase();
     if (err || !st.isFile()) {
+      if (!SPA_FALLBACK_EXT.has(ext)) {
+        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end('Not Found');
+        return;
+      }
       // SPA 回退
       const fallback = urlPath.startsWith('/m') ? path.join(PUBLIC_DIR, 'm', 'index.html') : path.join(PUBLIC_DIR, 'web', 'index.html');
       fs.readFile(fallback, (e2, buf) => {
-        if (e2) { res.writeHead(404).end('Not Found'); return; }
+        if (e2) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end('Not Found'); return; }
         res.writeHead(200, { 'Content-Type': MIME['.html'], 'Cache-Control': 'no-cache' });
         res.end(buf);
       });
       return;
     }
-    const ext = path.extname(filePath).toLowerCase();
     res.writeHead(200, {
       'Content-Type': MIME[ext] || 'application/octet-stream',
       // 系统还在频繁迭代，静态资源一律不缓存，避免改完代码刷新看不到
       'Cache-Control': 'no-cache'
     });
-    fs.createReadStream(filePath).pipe(res);
+    // 读取流出错（权限/文件被移除/客户端中断）必须自己接住，
+    // 未处理的 'error' 事件会变成未捕获异常，直接把进程打挂。
+    const stream = fs.createReadStream(filePath);
+    stream.on('error', (e) => {
+      console.warn('[static] 读取失败：', filePath, e.message);
+      try { res.writeHead(500).end('Read Error'); } catch (_) { /* ignore */ }
+    });
+    stream.pipe(res);
   });
 }
 
@@ -1057,44 +1098,75 @@ route('GET', '/api/health', (_req, res) => ok(res, { ok: true, time: new Date().
 /* ------------------------------------------------------------------ */
 /* 服务器                                                               */
 /* ------------------------------------------------------------------ */
-const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-  const pathname = url.pathname;
-
-  // 移动端 UA 自动进入手机版
-  if ((pathname === '/' || pathname === '/index.html') && url.searchParams.get('v') !== 'web') {
-    const ua = String(req.headers['user-agent'] || '');
-    if (/iPhone|Android|Mobile|iPad|Windows Phone/i.test(ua)) {
-      res.writeHead(302, { Location: '/m/' });
-      res.end();
-      return;
-    }
-  }
-
-  if (!pathname.startsWith('/api/')) {
-    serveStatic(req, res, pathname);
-    return;
-  }
-
-  const method = req.method || 'GET';
+const server = http.createServer((req, res) => {
+  // 整个请求处理都包在 try/catch 里：任何意外都不能变成未捕获异常把进程打挂，
+  // 否则托管环境会直接返回 500 INTERNAL_FUNCTION_INVOCATION_FAILED。
   try {
-    for (const r of routes) {
-      if (r.method !== method) continue;
-      const m = r.regex.exec(pathname);
-      if (!m) continue;
-      const params = {};
-      r.keys.forEach((k, i) => { params[k] = decodeURIComponent(m[i + 1]); });
-      await r.handler(req, res, url, m, params);
+    const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+    const pathname = url.pathname;
+
+    // 移动端 UA 自动进入手机版（健康检查常用 HEAD，不做跳转）
+    if ((pathname === '/' || pathname === '/index.html') && url.searchParams.get('v') !== 'web' && req.method !== 'HEAD') {
+      const ua = String(req.headers['user-agent'] || '');
+      if (/iPhone|Android|Mobile|iPad|Windows Phone/i.test(ua)) {
+        res.writeHead(302, { Location: '/m/' });
+        res.end();
+        return;
+      }
+    }
+
+    if (!pathname.startsWith('/api/')) {
+      serveStatic(req, res, pathname);
       return;
     }
-    fail(res, `接口不存在：${method} ${pathname}`, 404);
+
+    const method = req.method || 'GET';
+    const matched = routes.find((r) => r.method === method && r.regex.test(pathname));
+    if (!matched) {
+      fail(res, `接口不存在：${method} ${pathname}`, 404);
+      return;
+    }
+    const m = matched.regex.exec(pathname);
+    const params = {};
+    matched.keys.forEach((k, i) => { params[k] = decodeURIComponent(m[i + 1]); });
+
+    Promise.resolve()
+      .then(() => matched.handler(req, res, url, m, params))
+      .catch((err) => {
+        console.error('[api]', method, pathname, err && err.stack ? err.stack : err);
+        if (!res.headersSent) fail(res, (err && err.message) || '服务器内部错误', 500);
+        else { try { res.end(); } catch (_) { /* ignore */ } }
+      });
   } catch (err) {
-    console.error('[api]', method, pathname, err);
-    fail(res, err.message || '服务器内部错误', 500);
+    console.error('[req]', req.method, req.url, err && err.message);
+    try {
+      if (!res.headersSent) res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('Internal Error');
+    } catch (_) { /* ignore */ }
   }
 });
 
-server.listen(PORT, '0.0.0.0', () => {
+/* 兜底：任何漏网的异常都只记录，不让进程退出 */
+process.on('uncaughtException', (err) => {
+  console.error('[uncaughtException]', err && err.stack ? err.stack : err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[unhandledRejection]', reason && reason.stack ? reason.stack : reason);
+});
+
+const HOST = process.env.HOST || '0.0.0.0';
+server.on('error', (err) => {
+  console.error('[server] 监听失败：', err && err.message);
+  // EADDRINUSE 常见于「旧实例还没退出就启动了新实例」，等一下重试，
+  // 别让进程直接崩掉（托管环境表现为 500）。
+  if (err && err.code === 'EADDRINUSE') {
+    setTimeout(() => {
+      try { server.listen(PORT, HOST); } catch (e) { console.error('[server] 重试监听失败：', e.message); }
+    }, 1500);
+  }
+});
+
+server.listen(PORT, HOST, () => {
   console.log(`\n  ATK 工作室 · 新人学习进度管理系统`);
   console.log(`  ------------------------------------------`);
   console.log(`  网页版（PC）  http://localhost:${PORT}/`);
@@ -1104,9 +1176,15 @@ server.listen(PORT, '0.0.0.0', () => {
 });
 
 function shutdown() {
-  flush();
-  server.close(() => process.exit(0));
-  setTimeout(() => process.exit(0), 1500);
+  // 慢磁盘上落盘可能要好几秒：先把最后一次数据写完再退出，别把改动丢在半路。
+  Promise.resolve()
+    .then(() => flush())
+    .catch((err) => console.error('[shutdown] 落盘失败：', err && err.message))
+    .then(() => {
+      try { server.close(() => process.exit(0)); } catch (_) { process.exit(0); }
+    });
+  // 兜底：最多等 6 秒，绝不把退出流程卡死（托管环境会因此判定启动/停止失败）
+  setTimeout(() => process.exit(0), 6000).unref?.();
 }
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
